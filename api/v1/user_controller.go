@@ -38,3 +38,38 @@ func Login(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response.FailMsg("Login failed"))
 }
+
+// 修改用户信息
+func ModifyUserInfo(c *gin.Context) {
+	var user model.User
+	c.ShouldBindJSON(&user)
+	log.Logger.Debug("user", log.Any("user", user))
+
+	if err := service.UserService.ModifyUserInfo(&user); err != nil {
+		c.JSON(http.StatusOK, response.FailMsg(err.Error()))
+		return
+	}
+
+	c.JSON(http.StatusOK, response.SuccessMsg(nil))
+}
+
+// 获取用户的详细信息
+func GetUserDetails(c *gin.Context) {
+	uuid := c.Param("uuid")
+
+	c.JSON(http.StatusOK, response.SuccessMsg(service.UserService.GetUserDetails(uuid)))
+}
+
+// 通过名称查找群组或者用户
+func GetUserOrGroupByName(c *gin.Context) {
+	name := c.Query("name")
+
+	c.JSON(http.StatusOK, response.SuccessMsg(service.UserService.GetUserOrGroupByName(name)))
+}
+
+// 获取用户列表
+func GetUserList(c *gin.Context) {
+	uuid := c.Query("uuid")
+
+	c.JSON(http.StatusOK, response.SuccessMsg(service.UserService.GetUserList(uuid)))
+}
